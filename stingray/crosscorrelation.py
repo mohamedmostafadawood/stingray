@@ -1,4 +1,7 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple, Union, List
 import warnings
+from construct import Optional
 import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
@@ -8,6 +11,7 @@ from stingray.lightcurve import Lightcurve
 from stingray.crossspectrum import Crossspectrum, AveragedCrossspectrum
 from stingray.exceptions import StingrayError
 import stingray.utils as utils
+
 
 __all__ = ['CrossCorrelation', 'AutoCorrelation']
 
@@ -78,7 +82,7 @@ class CrossCorrelation(object):
     .. [scipy-docs] https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.signal.correlate.html
     """
 
-    def __init__(self, lc1=None, lc2=None, cross=None, mode='same', norm="none"):
+    def __init__(self, lc1: Lightcurve = None, lc2: Lightcurve = None, cross: Crossspectrum = None, mode: Optional = 'same', norm: Optional = "none"):
 
         self.auto = False
         self.norm = norm
@@ -113,7 +117,7 @@ class CrossCorrelation(object):
         else:
             self._make_corr(lc1, lc2)
 
-    def _make_cross_corr(self, cross):
+    def _make_cross_corr(self, cross: Crossspectrum = None) -> None:
 
         """
         Do some checks on the cross spectrum supplied to the method,
@@ -150,7 +154,7 @@ class CrossCorrelation(object):
         self.time_shift, self.time_lags, self.n = self.cal_timeshift(dt=self.dt)
 
 
-    def _make_corr(self, lc1, lc2):
+    def _make_corr(self, lc1: Lightcurve, lc2: Lightcurve) -> None:
 
         """
         Do some checks on the light curves supplied to the method, and then calculate the time
@@ -206,7 +210,7 @@ class CrossCorrelation(object):
             variance2 = np.var(lc2.counts) - np.mean(lc2.counts_err)**2
             self.corr = self.corr / np.sqrt(variance1 * variance2) / lc1_counts.size
 
-    def cal_timeshift(self, dt=1.0):
+    def cal_timeshift(self, dt: float = 1.0) -> Tuple[float, np.ndarray]:
         """
         Calculate the cross correlation against all possible time lags, both positive and negative.
 
@@ -269,7 +273,9 @@ class CrossCorrelation(object):
 
         return self.time_shift, self.time_lags, self.n
 
-    def plot(self, labels=None, axis=None, title=None, marker='-', save=False, filename=None, ax=None):
+    def plot(self, labels: List[Tuple[str, str]] = None,
+     axis: Union[List, Tuple, str] = None, title: str = None,
+     marker: str = '-', save: bool = False, filename: str = None, ax: plt.Axes = None) -> plt.Axes:
         """
         Plot the :class:`Crosscorrelation` as function using Matplotlib.
         Plot the Crosscorrelation object on a graph ``self.time_lags`` on x-axis and
@@ -375,7 +381,7 @@ class AutoCorrelation(CrossCorrelation):
          Number of points in self.corr(Length of auto-correlation data)
     """
 
-    def __init__(self, lc=None, mode='same'):
+    def __init__(self, lc: Lightcurve = None, mode: Optional = 'same'):
 
         CrossCorrelation.__init__(self, lc1=lc, lc2=lc, mode=mode)
         self.auto = True
