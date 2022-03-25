@@ -1,7 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple, Union, List
-import warnings
-from construct import Optional
+from typing import Optional, Tuple, Union, List
 import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
@@ -82,7 +80,7 @@ class CrossCorrelation(object):
     .. [scipy-docs] https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.signal.correlate.html
     """
 
-    def __init__(self, lc1: Lightcurve = None, lc2: Lightcurve = None, cross: Crossspectrum = None, mode: Optional = 'same', norm: Optional = "none"):
+    def __init__(self, lc1: Lightcurve = None, lc2: Lightcurve = None, cross: Crossspectrum = None, mode='same', norm= "none"):
 
         self.auto = False
         self.norm = norm
@@ -117,7 +115,7 @@ class CrossCorrelation(object):
         else:
             self._make_corr(lc1, lc2)
 
-    def _make_cross_corr(self, cross: Crossspectrum = None) -> None:
+    def _make_cross_corr(self, cross= None):
 
         """
         Do some checks on the cross spectrum supplied to the method,
@@ -154,7 +152,7 @@ class CrossCorrelation(object):
         self.time_shift, self.time_lags, self.n = self.cal_timeshift(dt=self.dt)
 
 
-    def _make_corr(self, lc1: Lightcurve, lc2: Lightcurve) -> None:
+    def _make_corr(self, lc1=None, lc2=None) :
 
         """
         Do some checks on the light curves supplied to the method, and then calculate the time
@@ -210,11 +208,11 @@ class CrossCorrelation(object):
             variance2 = np.var(lc2.counts) - np.mean(lc2.counts_err)**2
             self.corr = self.corr / np.sqrt(variance1 * variance2) / lc1_counts.size
 
-    def cal_timeshift(self, dt: float = 1.0) -> Tuple[float, np.ndarray]:
+    def cal_timeshift(self, dt=1.0) -> Tuple[float, np.ndarray, int]:
         """
         Calculate the cross correlation against all possible time lags, both positive and negative.
 
-        The method signal.correlation_lags() uses SciPy versions >= 1.6.1 ([scipy-docs-lag]_)
+       The method signal.correlation_lags() uses SciPy versions >= 1.6.1 ([scipy-docs-lag]_)
         
         References
         ----------
@@ -381,7 +379,7 @@ class AutoCorrelation(CrossCorrelation):
          Number of points in self.corr(Length of auto-correlation data)
     """
 
-    def __init__(self, lc: Lightcurve = None, mode: Optional = 'same'):
+    def __init__(self, lc: Lightcurve = None, mode= 'same'):
 
         CrossCorrelation.__init__(self, lc1=lc, lc2=lc, mode=mode)
         self.auto = True
