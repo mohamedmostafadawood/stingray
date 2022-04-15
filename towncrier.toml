@@ -1,0 +1,6 @@
+[tool.towncrier]
+package = "Stingray"
+package_dir = "src"
+filename = "NEWS.rst"
+version = "1.0"  # project version if maintained separately
+
